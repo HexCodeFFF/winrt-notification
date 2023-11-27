@@ -7,17 +7,17 @@ use winrt_notification::{
 
 fn main() {
     Toast::new("application that needs a toast with an image")
-        .hero(&Path::new("C:\\absolute\\path\\to\\image.jpeg"), "alt text")
+        .hero(&format!("file://{}", Path::new("C:\\absolute\\path\\to\\image.jpeg").display()), "alt text")
         .icon(
-            &Path::new("c:/this/style/works/too/image.png"),
+            &format!("file://{}", Path::new("c:/this/style/works/too/image.png").display()),
             IconCrop::Circular,
             "alt text",
         )
         .title("Lots of pictures here")
         .text1("One above the text as the hero")
         .text2("One to the left as an icon, and several below")
-        .image(&Path::new("c:/photos/sun.png"), "the sun")
-        .image(&Path::new("c:/photos/moon.png"), "the moon")
+        .image(&format!("file://{}", Path::new("c:/photos/sun.png").display()), "the sun")
+        .image(&format!("file://{}", Path::new("c:/photos/moon.png").display()), "the moon")
         .sound(None) // will be silent
         .show()
         .expect("notification failed");

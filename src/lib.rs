@@ -211,7 +211,7 @@ impl Toast {
     ///
     /// The default is determined by your app id.
     /// If you are using the powershell workaround, it will be the powershell icon
-    pub fn icon(mut self, source: &Path, crop: IconCrop, alt_text: &str) -> Toast {
+    pub fn icon(mut self, source: &String, crop: IconCrop, alt_text: &str) -> Toast {
         if windows_check::is_newer_than_windows81() {
             let crop_type_attr = match crop {
                 IconCrop::Square => "".to_string(),
@@ -219,10 +219,10 @@ impl Toast {
             };
 
             self.images = format!(
-                r#"{}<image placement="appLogoOverride" {} src="file:///{}" alt="{}" />"#,
+                r#"{}<image placement="appLogoOverride" {} src="{}" alt="{}" />"#,
                 self.images,
                 crop_type_attr,
-                escape_str_attribute(&source.display().to_string()),
+                escape_str_attribute(&source),
                 escape_str_attribute(alt_text)
             );
             self
@@ -235,12 +235,12 @@ impl Toast {
     /// Add/Set a Hero image for the toast.
     ///
     /// This will be above the toast text and the icon.
-    pub fn hero(mut self, source: &Path, alt_text: &str) -> Toast {
+    pub fn hero(mut self, source: &String, alt_text: &str) -> Toast {
         if windows_check::is_newer_than_windows81() {
             self.images = format!(
-                r#"{}<image placement="Hero" src="file:///{}" alt="{}" />"#,
+                r#"{}<image placement="Hero" src="{}" alt="{}" />"#,
                 self.images,
-                escape_str_attribute(&source.display().to_string()),
+                escape_str_attribute(&source),
                 escape_str_attribute(alt_text)
             );
             self
@@ -254,15 +254,15 @@ impl Toast {
     ///
     /// May be done many times.
     /// Will appear below text.
-    pub fn image(mut self, source: &Path, alt_text: &str) -> Toast {
+    pub fn image(mut self, source: &String, alt_text: &str) -> Toast {
         if !windows_check::is_newer_than_windows81() {
             // win81 cannot have more than 1 image and shows nothing if there is more than that
             self.images = "".to_owned();
         }
         self.images = format!(
-            r#"{}<image id="1" src="file:///{}" alt="{}" />"#,
+            r#"{}<image id="1" src="{}" alt="{}" />"#,
             self.images,
-            escape_str_attribute(&source.display().to_string()),
+            escape_str_attribute(&source),
             escape_str_attribute(alt_text)
         );
         self
@@ -346,9 +346,9 @@ mod tests {
     fn simple_toast() {
         let toast = Toast::new(Toast::POWERSHELL_APP_ID);
         toast
-            .hero(&Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg"), "flower")
+            .hero(&format!("file://{}", Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/flower.jpeg").display()), "flower")
             .icon(
-                &Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/chick.jpeg"),
+                &format!("file://{}", Path::new(env!("CARGO_MANIFEST_DIR")).join("resources/test/chick.jpeg").display()),
                 IconCrop::Circular,
                 "chicken",
             )
